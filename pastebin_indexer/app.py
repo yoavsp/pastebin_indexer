@@ -19,9 +19,9 @@ def crawl_pastebin(sc: sched.scheduler, pbc: PastebinController):
 
 
 if __name__ == "__main__":
-    coordinator = PastebinController(get_paste_repository(),
-                                     PastebinCrawlerImpl())
+    controller = PastebinController(get_paste_repository(),
+                                    PastebinCrawlerImpl())
     scheduler = sched.scheduler(time.time, time.sleep)
 
-    scheduler.enter(0, 1, crawl_pastebin, (scheduler, coordinator,))
+    scheduler.enter(0, 1, crawl_pastebin, (scheduler, controller,))
     scheduler.run()

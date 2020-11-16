@@ -1,0 +1,3 @@
+
+class DOMChangedException(Exception):
+    pass

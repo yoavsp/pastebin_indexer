@@ -10,6 +10,7 @@ from pastebin_indexer.config import ANONYMOUS_USER_NAMES, UNTITLED_TITLES
 from pastebin_indexer.domain.model import Paste
 from pastebin_indexer.providers.contract.pastebin_crawler \
     import PastebinCrawler
+from pastebin_indexer.providers.exceptions import DOMChangedException
 
 
 def sanitize_username(username: str) -> str:
@@ -55,25 +56,33 @@ class PastebinCrawlerImpl(PastebinCrawler):
             paste_html = requests.get(os.path.join(self.BASE_URL, paste_id))
             paste_doc = lxml.html.fromstring(paste_html.content)
             paste_title_element = paste_doc.xpath("//div[@class="
-                                                  "'info-top']/h1")[0]
-            paste_title = paste_title_element.text
-
-            user_element = paste_doc.xpath("//div[@class='username']/a")[0]
-            username = user_element.text
-
+                                                  "'info-top']/h1")
+            user_element = paste_doc.xpath("//div[@class='username']/a")
             date_element = paste_doc.xpath("//div[@class='date']"
                                            "/span[@title and "
-                                           "text()!='edited']/@title")[0]
-            paste_date = arrow.get(date_element.replace("CDT", "US/Central"),
+                                           "text()!='edited']/@title")
+            content_element = paste_doc.find_class("textarea")
+            if([] in [paste_title_element,
+                      user_element,
+                      date_element,
+                      content_element]):
+                raise DOMChangedException()
+
+            paste_title = paste_title_element[0].text
+            username = user_element[0].text
+
+            paste_date = arrow.get(date_element[0]
+                                   .replace("CDT", "US/Central"),
                                    "dddd DD[th] [of] MMMM YYYY HH:mm:ss A ZZZ")
 
-            content_element = paste_doc.find_class("textarea")[0]
-            content = content_element.value.strip("\r\n ")
+            content = content_element[0].value.strip("\r\n ")
             paste = Paste(paste_id,
                           sanitize_username(username),
                           sanitize_title(paste_title),
                           paste_date,
                           content)
             return paste
+
         except Exception as e:
             self.logger.exception(e)
+            raise

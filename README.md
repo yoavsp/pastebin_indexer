@@ -1,5 +1,7 @@
 
 # Pastebin Indexer
+A simple web crawler in Python 3.
+The crawler crawls the site: https://pastebin.com/ every 2 minutes and stores the most recent "pastes" in a structured data model.
 
 ## Installation
 

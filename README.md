@@ -9,7 +9,7 @@ The crawler crawls the site: https://pastebin.com/ every 2 minutes and stores th
 You can run the solution in [docker-compose](https://docs.docker.com/compose/install/) or locally.
 
 ### docker-compose
-After installing compose, cd insights_exercise and run:
+After installing compose, cd pastebin_indexer and run:
 
 ```bash
 docker-compose up
@@ -23,7 +23,7 @@ Create a virtual environment:
 python3 -m venv /path/to/new/virtual/environment
 . /path/to/new/virtual/environment/bin/activate
 ```
-cd insights_exercise and run:
+cd pastebin_indexer and run:
 
 ```bash
 pip install -r requirements.txt
